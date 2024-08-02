@@ -1,11 +1,20 @@
 from builtins import Exception
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from starlette.responses import JSONResponse
 from starlette.middleware.cors import CORSMiddleware  # Import the CORSMiddleware
 from app.database import Database
 from app.dependencies import get_settings
 from app.routers import user_routes
 from app.utils.api_description import getDescription
+import logging
+import logging.config
+
+# Load the logging configuration from the file
+logging.config.fileConfig('logging.conf')
+
+# Get the logger for the application
+logger = logging.getLogger('app')
+
 app = FastAPI(
     title="User Management",
     description=getDescription(),
@@ -38,5 +47,3 @@ async def exception_handler(request, exc):
     return JSONResponse(status_code=500, content={"message": "An unexpected error occurred."})
 
 app.include_router(user_routes.router)
-
-
